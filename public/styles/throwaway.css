@@ -1,0 +1,77 @@
+
+
+/* 抛载状态显示样式 - 表格形式 */
+.throw-away-display {
+    position: absolute;
+    top: 380px;
+    left: 0px;
+    border-radius: 8px;
+    padding: 8px 12px;
+    height: 100px;
+    width: 170px;
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid #4a4a4a;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+     z-index: 1001;
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    background: rgba(10, 25, 41, 0.85);
+    backdrop-filter: blur(6.4px);
+    border-radius: 14.4px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 167, 255, 0.15);
+}
+
+.throw-away-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.throw-away-table tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.throw-away-table tr:last-child {
+    border-bottom: none;
+}
+
+.throw-away-table td {
+    padding: 8px 4px;
+    vertical-align: middle;
+}
+
+.throw-away-label {
+    font-size: 14px;
+   
+    color: #fb1c62;
+    width: 70px;
+     font-weight: bold;
+    padding-right: 10px;
+}
+
+.throw-away-value {
+    font-size: 15px;
+    margin-top: -19px;
+    
+    margin-right: -70px;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 0 3px rgba(46, 204, 113, 0.3);
+    transition: color 0.3s ease;
+}
+
+.throw-away-value.thrown {
+    color: #e74c3c;
+    text-shadow: 0 0 3px rgba(231, 76, 60, 0.3);
+}
+
+/* 抛载状态闪烁动画 */
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+}
+
+.throw-away-display.thrown {
+    animation: pulse 1s 3;
+}

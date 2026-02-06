@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="styles/all.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/power.css">
+    <link rel="stylesheet" href="styles/beidou.css">
+    <link rel="stylesheet" href="styles/oil-tank.css">
+    <link rel="stylesheet" href="styles/pin-manager.css">
+    <link rel="stylesheet" href="styles/self-check.css">
+    <link rel="stylesheet" href="styles/safe.css">
+    <link rel="stylesheet" href="styles/glide.css">
+    <link rel="stylesheet" href="styles/throwaway.css">  
+    <link rel="stylesheet" href="styles/all.css">
+    
+    
+
+   
+ 
+   
+   
+    <title>auv显控系统</title>
+</head>
+<body>
+ 
+<!-- #region 标题栏面板-->
+
+    <div class="top-task-bar">
+        <!-- Logo和系统名称 -->
+        <div class="taskbar-logo">
+            <div class="system-logo"></div>
+            <div class="system-name">AUV显控系统</div>
+             <!-- 整合后的服务器状态指示器 -->
+                <div class="system-status">
+                    <div class="status-item" id="server-status-indicator">
+                        <div class="status-indicator" id="server-status-light" style="background:#ff6b6b; box-shadow:0 0 6.4px #ff6b6b;"></div>
+                        <span id="server-status-text">服务器状态</span>
+                    </div>
+                    <div class="status-item" id="latency-item">
+                        <div>延迟:</div>
+                        <span id="latency">0 ms</span>
+                    </div>
+                    <!-- 添加的重连按钮 -->
+                    <button id="reconnect-btn" class="reconnect-btn" title="重新连接">
+                        <svg class="reconnect-icon" viewBox="0 0 24 24">
+                            <path d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z"/>
+                        </svg>
+                    </button>
+                     <div class="user-info">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="current-user">未登录</span>
+                        <button id="logout-btn" class="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                 </div>
+        </div>
+        
+        <!-- 切换设备按钮 -->
+        <div class="task-btn" id="device-switch-btn">
+            <i class="fas fa-exchange-alt"></i>
+            <span>切换设备</span>
+        </div>
+        
+        <!-- 轨迹规划按钮 -->
+        <div class="task-btn" id="path-planning-btn">
+            <i class="fas fa-route"></i>
+            <span>路径规划</span>
+        </div>
+      <!-- 清除轨迹按钮 -->
+        <div class="task-btn" id="clear-trail-btn">
+            <i class="fas fa-broom"></i>
+            <span>清除轨迹</span>
+        </div>
+        
+          <!-- 设备电源控制按钮 -->
+        <button class="task-btn" id="power-control-btn"   onclick="openPowerModal()">
+            <i class="fas fa-power-off"></i>
+            <span>设备电源</span>
+        </button>
+        
+        
+        <!-- 自检按钮-->
+        <button class="task-btn" id="Selfcheck-btn"  onclick="window.openSelfcheckModal() ">
+            <i class="fas fa-cogs" ></i>
+            <span>自检</span>
+        </button>
+           
+                <!-- 添加的计时块 -->
+       <!-- 计时器控件 -->
+    <div class="timer-controls">
+       <input type="time" id="timer-input" class="timer-input" step="1">
+       
+    </div>
+    <!-- 新增电池电量显示 -->
+<div class="battery-display-container">
+    <div class="battery-icon">
+        <div class="battery-tip"></div>
+        <div class="battery-body">
+            <div class="battery-level" id="battery-level"></div>
+        </div>
+    </div>
+    <span class="battery-percentage" id="battery-percentage">--%</span>
+</div>
+    <!-- 模式切换按钮 -->
+        <div class="task-btn mode-btn active" id="control-mode">
+            <i class="fas fa-robot"></i>
+            <span>自动模式</span>
+            <div class="mode-indicator"></div>
+        </div>
+    </div>
+    <!-- 在任务栏下方添加故障显示区域 -->
+<div id="fault-display-area" class="fault-display-area" style="display: none;">
+    <div class="fault-header">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>设备故障提醒</span>
+        <button class="fault-close-btn" onclick="hideFaultDisplay()">&times;</button>
+    </div>
+    <div class="fault-content" id="fault-content">
+        <!-- 故障信息将动态显示在这里 -->
+    </div>
+</div>
+
+
+       <!-- #region 当前设备显示-->
+       <!-- 设备显示框 -->
+    <div class="device-display-container">
+        <div class="device-display">
+            <div class="scan-line"></div>
+            <div class="device-layer"></div>
+            <div class="device-layer"></div>
+            <div class="particles" id="particles-container"></div>
+            <div class="device-status-indicator" id = "device-status-indicator-1" ></div>
+            
+            <span class="device-name" id="current-device">AUV-01 </span>
+            <div class="user-permission-hint" id="permission-hint">
+            <i class="fas fa-info-circle"></i>
+            <span id="hint-text">权限：AUV设备控制</span>
+        </div>
+        </div>
+    </div>
+    <!-- #endregion -->
+    <!-- 页面内容区域 -->
+    <div class="content">
+        <div class="dashboard">         
+            <div class="map-container">
+                <div class="grid-lines"></div>
+                <div class="map-overlay">
+                </div>
+            </div>
+
+           
+  
+          
+            <!-- #endregion -->
+            
+           
+ <!-- #region 地图面板-->
+            <div id="map"></div>
+            <!-- #endregion -->
+            
+<!-- 帆船模型容器 -->
+<div id="sailboat-model-container" style="
+    position: absolute;
+    top: 100px;
+    right: 300px;
+    width: 400px;
+    height: 300px;
+    z-index: 1000;
+    background: rgba(10, 25, 41, 0.7);
+    border: 1px solid rgba(0, 167, 255, 0.3);
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
+    display: none;
+"></div>    
+ <!-- #region 外接设备状态面板-->
+            <!-- 设备状态面板 -->
+            <div id="device-panel">
+                <div class="panel-title"></div>
+                
+                <!-- 外接设备 -->
+                <div id="video-device" class="device-item">
+                    <div class="device-icon video-icon">📹</div>
+                    <div class="device-info">
+                        <div class="device-header">
+                            <div class="device-name">图传电台</div>
+                        </div>
+                    <div class="device-timers">
+                    <div class="timer-box">
+                        <div class="timer-label">状态持续时间</div>
+                        <div class="timer-value status-timer">00:00:00</div>
+                    </div>
+                </div>
+                    </div>
+                </div>
+                
+                <div id="beidou-device" class="device-item">
+                    <div class="device-icon beidou-icon">🛰️</div>
+                    <div class="device-info">
+                        <div class="device-header">
+                            <div class="device-name">北斗设备</div>
+                        </div>
+                       <div class="device-timers">
+                        <div class="timer-box">
+                            <div class="timer-label">状态持续时间</div>
+                            <div class="timer-value status-timer">00:00:00</div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                
+                <bottom id="acoustic-device" class="device-item">
+                    <div class="device-icon acoustic-icon">🔊</div>
+                    <div class="device-info">
+                        <div class="device-header">
+                            <div class="device-name">声通设备</div>
+                        </div>
+                     <div class="device-timers">
+                    <div class="timer-box">
+                        <div class="timer-label">状态持续时间</div>
+                        <div class="timer-value status-timer">00:00:00</div>
+                    </div>
+                </div>
+                    </div>
+                </bottom>
+                
+                <div id="dvl-device" class="device-item" style="display: none;">
+                    <div class="device-icon dvl-icon">🌊</div>
+                    <div class="device-info">
+                        <div class="device-header">
+                            <div class="device-name">DVL多普勒</div>
+                            <div class="device-status">
+                                <div class="status-indicator status-disconnected"></div>
+                                <div class="status-text">断开连接</div>
+                            </div>
+                        </div>
+                        <div class="sensor-data">
+                            <div class="data-box">
+                                <div class="data-label">扫描深度</div>
+                                <div class="data-value">0米</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="multibeam-device" class="device-item" style="display: none;">
+                    <div class="device-icon multibeam-icon">📡</div>
+                    <div class="device-info">
+                        <div class="device-header">
+                            <div class="device-name">多波束测深</div>
+                            <div class="device-status">
+                                <div class="status-indicator status-disconnected"></div>
+                                <div class="status-text">断开连接</div>
+                            </div>
+                        </div>
+                        <div class="sensor-data">
+                            <div class="data-box">
+                                <div class="data-label">覆盖宽度</div>
+                                <div class="data-value">0米</div>
+                            </div>
+                            <div class="data-box">
+                                <div class="data-label">扫描深度</div>
+                                <div class="data-value">0米</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #endregion -->
+            
+           
+ <!-- #region 仪表盘主面板-->
+            <!-- 仪表盘面板 -->
+           
+    <!-- 抛载状态显示区域 - 添加在仪表盘顶部 -->
+<div id="throw-away-display" class="throw-away-display">
+        <div class="throw-away-row">
+            <div class="throw-away-cell">
+                <div class="throw-away-label">抛载状态:</div>
+                <div class="throw-away-value" id="throw-away-status">未抛载</div>
+            </div>
+        </div>
+        <div class="throw-away-row">
+            <div class="throw-away-cell">
+                <div class="throw-away-label">抛载时间:</div>
+                <div class="throw-away-value" id="throw-away-time">-</div>
+            </div>
+        </div>
+            <div class="throw-away-row">
+                <div class="throw-away-cell" >
+                    <div class="throw-away-label">高度:</div>
+                    <div class="throw-away-value" id="galtitude">0 米</div>
+                </div>
+            </div>
+        </div>
+            <div class="throw-away-row">
+            <div class="throw-away-cell">
+                <div class="throw-away-label">惯导状态:</div>
+                <div class="throw-away-value" id="updatedata-Inertial-guid-state">-</div>
+            </div>
+        </div>
+    </div>
+    <!-- 抛载状态显示区域 - 添加在仪表盘顶部 -->
+           
+    <button id="idle-btn" class="idle-btn">IDLE</button>
+             
+            <div id="dashboard">
+                <div class="instrument">
+                    <div class="instrument-title">速度仪表</div>
+                    <div class="gauge speed-gauge">
+                        <div class="gauge-inner">
+                            <div class="gauge-value">0</div>
+                        </div>
+                        <div class="needle"></div>
+                    </div>
+                    <div class="instrument-unit">米/秒</div>
+                </div>
+                
+                <div class="instrument">
+                    <div class="instrument-title">航向仪表</div>
+                    <div class="gauge heading-gauge">
+                        <div class="gauge-inner">
+                            <div class="gauge-value">0°</div>
+                        </div>
+                        <div class="compass-pointer"></div>
+                    </div>
+                    <div class="instrument-unit">真北方向</div>
+                </div>
+                
+                <div class="instrument">
+                    <div class="instrument-title">信号强度</div>
+                    <div class="signal-indicator">
+                        <div class="bars">
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                        </div>
+                        <div class="signal-value">0%</div>
+                    </div>
+                </div>
+                
+                <div class="position-info">
+                    <div class="info-row">
+                        <div class="info-label">经度:</div>
+                        <div class="info-value" id="longitude">0</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">纬度:</div>
+                        <div class="info-value" id="latitude">0</div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">更新时间:</div>
+                        <div class="info-value" id="timestamp">--:--:--</div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">状态机:</div>
+                        <div class="info-value" id="state_codes">idle</div>
+                    </div>
+                </div>
+            </div>
+            <!-- #endregion -->
+            
+<!-- #region 设备上断电-->
+           <!-- 电源控制模态框 -->
+<!-- 在index.html中找到电源模态框部分，替换为以下内容 -->
+<div class="power-modal" id="powerModal">
+    <div class="power-modal-content">
+        <div class="power-modal-header">
+            <div class="power-modal-title">
+                <i class="fas fa-bolt"></i>
+                <span>设备电源控制</span>
+            </div>
+            <button class="power-close-btn" onclick="closePowerModal()">&times;</button>
+        </div>
+        
+        <div class="power-modal-body">
+            <!-- 删除电源摘要部分（可选） -->
+            <!-- <div class="power-summary">...</div> -->
+            
+            <!-- 使用新的网格布局 -->
+            <div class="power-devices-grid" id="devicesGrid">
+                <!-- 设备卡片将由JavaScript动态生成 -->
+            </div>
+        </div>
+        
+        <div class="power-modal-footer">
+            <div class="power-bulk-actions">
+                <button class="power-action-btn power-on-all" onclick="powerOnAll()">
+                    <i class="fas fa-play-circle"></i> 全部上电
+                </button>
+                <button class="power-action-btn power-off-all" onclick="powerOffAll()">
+                    <i class="fas fa-stop-circle"></i> 全部断电
+                </button>
+            </div>
+            <button class="power-confirm-btn" onclick="applyPowerSettings()">
+                <i class="fas fa-check-circle"></i> 应用设置
+            </button>
+        </div>
+    </div>
+</div>
+           <!-- #endregion -->
+
+           
+       
+ <!-- #region 推进器和舵机面板-->
+            <!-- 舵机和推进器状态面板 -->
+            <button id="thruster-panel">
+                <div class="thruster-header">推进系统状态</div>
+                <div class="thruster-container">
+                    <div class="thruster-item">
+                        <div class="thruster-name">
+                            <span class="thruster-status-indicator status-normal"></span>
+                            左舵机
+                        </div>
+                        <div class="angle-display" id  = 'left-angle-display'>0°</div>
+                    </div>
+                    
+                    <div class="thruster-item">
+                        <div class="thruster-name">
+                            <span class="thruster-status-indicator status-normal"></span>
+                            右舵机
+                        </div>
+                        <div class="angle-display"id  = 'right-angle-display'>0°</div>
+                    </div>
+                    
+                    <div class="thruster-item">
+                        <div class="thruster-name">
+                            <span class="thruster-status-indicator status-normal"></span>
+                            上舵机
+                        </div>
+                        <div class="angle-display"id  = 'upper-angle-display'>0°</div>
+                    </div>
+                    
+                    <div class="thruster-item">
+                        <div class="thruster-name">
+                            <span class="thruster-status-indicator status-normal"></span>
+                            下舵机
+                        </div>
+                        <div class="angle-display"id  = 'lower-angle-display'>0°</div>
+                    </div>
+                    
+                    <div class="thruster-item" style="grid-column: span 2;">
+                        <div class="thruster-name">
+                            <span class="thruster-status-indicator status-normal"></span>
+                            主推进器
+                        </div>
+                        <div class="duty-display"id  = 'thruster-angle-display'>上报推进转速:0RPM</div>
+
+                        <div class="duty-display"id  = 'thruster-speed-display'>下发PWM占比:0%</div>
+                    </div>
+                </div>
+            </button>
+            <!-- #endregion -->
+<!-- 推进系统控制模态框 -->
+<div id="thruster-control-modal" class="modal-thruster">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">推进系统控制</div>
+            <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body-thruster">
+            <div class="thruster-control-container">
+                <!-- 左侧：舵机控制 -->
+                <div class="control-column">
+                    <div class="control-section">
+                        <h3>舵机控制</h3>
+                        <div class="control-grid">
+                            <div class="control-item">
+                                <label for="left-rudder">左舵机角度 (°)</label>
+                                <input type="number" id="left-rudder" class="control-input" min="-90" max="90" value="0">
+                                <button class="set-btn" data-target="left-rudder">设置</button>
+                            </div>
+                            <div class="control-item">
+                                <label for="right-rudder">右舵机角度 (°)</label>
+                                <input type="number" id="right-rudder" class="control-input" min="-90" max="90" value="0">
+                                <button class="set-btn" data-target="right-rudder">设置</button>
+                            </div>
+                            <div class="control-item">
+                                <label for="upper-rudder">下舵机角度 (°)</label>
+                                <input type="number" id="upper-rudder" class="control-input" min="-90" max="90" value="0">
+                                <button class="set-btn" data-target="upper-rudder">设置</button>
+                            </div>
+                            <div class="control-item">
+                                <label for="lower-rudder">上舵机角度 (°)</label>
+                                <input type="number" id="lower-rudder" class="control-input" min="-90" max="90" value="0">
+                                <button class="set-btn" data-target="lower-rudder">设置</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右侧：推进器和无刷电机 -->
+                <div class="control-column">
+                    <!-- 推进器控制 -->
+                    <div class="control-section">
+                        <h3>推进器控制</h3>
+                        <div class="control-item full-width">
+                            <label for="thruster-duty">推进系数 (%)</label>
+                            <input type="range" id="thruster-duty" class="control-slider" min="-100" max="100" value="0">
+                            <span id="duty-value">0%</span>
+                            <button class="set-btn" data-target="thruster-duty">设置</button>
+                        </div>
+                    </div>
+
+                    <!-- 无刷电机控制 -->
+                    <div class="control-section">
+                        <h3>无刷电机控制</h3>
+                        <div class="brushless-control-container">
+                            <!-- 无刷电机状态显示 -->
+                            <div class="brushless-status-display">
+                                <div class="brushless-status-item">
+                                    <label>当前位置:</label>
+                                    <div class="brushless-value" id="brushless-position">0°</div>
+                                </div>
+                                <div class="brushless-status-item">
+                                    <label>目标位置:</label>
+                                    <input class="control-input" id="brushless-target"value="0">
+                                </div>
+                            </div>
+                            
+                            <!-- 无刷电机设置 -->
+                            <div class="brushless-controls">
+        
+                              <button id="brushless-position-btn" class="path-button">无刷电机位置</button>
+                            </div>
+                        </div>
+                    </div>
+
+                  <div class="modal-footer">
+                        <button id="apply-all-btn" class="path-button">应用所有设置</button>
+                        <button id="reset-all-btn" class="path-button clear">重置所有</button>
+                        <button id="rudder-zero-btn" class="path-button clear">舵机置零</button>
+                    </div>
+                </div>
+            </div>
+ 
+        </div>
+
+    </div>
+</div>
+   
+ <!-- #region 手动路径规划栏-->
+
+    <!-- 路径规划模态框 -->
+    <div id="path-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">路径规划</div>
+                <button class="close-modal" id = "path-close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="tabs">
+                    <button class="tab active" data-tab="manual">手动规划</button>
+                    <button class="tab" data-tab="survey">区域测绘</button>
+                    
+                    <button class="tab" data-tab="xml">XML导入</button>
+                     <button class="tab" data-tab="glidepoints">滑行任务</button>
+                    <button class="tab" data-tab="safety">安全配置</button>
+                </div>
+
+                <!-- 手动路径规划 -->
+                <div id="manual-tab" class="tab-content active">
+                    <div id="manual-path-panel">
+                        <div class="path-controls">
+                            <button id="start-path-btn" class="path-button">开始绘制路径</button>
+                            <button id="clear-path-btn" class="path-button clear">清除路径</button> 
+                            <button id="save-path-btn" class="path-button">保存路径</button>
+                            <button id="send-path-btn" class="path-button send">发送路径</button>
+                            <button id="assignment-start-btn" class="path-button">开始任务</button>
+                         <!--   <button id="beidou-send-btn" class="path-button">北斗下发</button>-->
+                        </div>
+                         
+                                            <!-- 北斗下发控制区域 -->
+                        <div id="beidou-send-controls" style="display: none; margin-top: 15px; padding: 15px; background: rgba(0, 167, 255, 0.1); border-radius: 8px; border: 1px solid rgba(0, 167, 255, 0.3);">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                                <div class="config-item">
+                                    <label for="beidou-send-mode">下发模式</label>
+                                    <select id="beidou-send-mode" class="config-select">
+                                        <option value="mission">任务下发</option>
+                                        <option value="virtual-anchor">虚拟锚泊</option>
+                                    </select>
+                                </div>
+                                <div class="config-item">
+                                    <label for="beidou-receiver-id">北斗接收ID</label>
+                                    <input type="text" id="beidou-receiver-id" class="config-input" value="1234567" placeholder="请输入北斗设备ID">
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button id="confirm-beidou-send" class="path-button send" style="flex: 1;">
+                                    <i class="fas fa-satellite"></i> 确认下发
+                                </button>
+                                <button id="cancel-beidou-send" class="path-button clear" style="flex: 1;">
+                                    <i class="fas fa-times"></i> 取消
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="path-list-container">
+                            <div class="path-list-header">
+                                <span>序号</span>
+                                <span>坐标 (经度, 纬度)</span>
+                                <bottom id="deep-aplytoall" onclick="applyToAll('depth')">深度 (米)</bottom>
+                                <bottom id="speed-aplytoall" onclick="applyToAll('speed')">速度</bottom>
+                                <bottom id="phi-aplytoall" onclick="applyToAll('phi')">phi</bottom>
+                                <bottom id="mode-aplytoall" onclick="applyToAll('mode')">模式</bottom>
+                            </div>
+                            <div class="path-list" id="path-list"></div>
+                        </div>
+                        
+                        <div class="status-message" id="path-status">
+                            准备绘制路径
+                        </div>
+                    </div>
+                </div>
+
+
+              <!-- 区域测绘 -->
+            <div id="survey-tab" class="tab-content">
+                <div id="survey-path-panel">
+                    <div class="path-controls">
+                        <button id="survey-start-btn" class="path-button">开始测绘</button>
+                        <button id="survey-clear-btn" class="path-button clear">清除测绘</button>
+                        <button id="survey-save-btn" class="path-button">保存为路径</button>
+                        <button id="survey-send-btn" class="path-button">发送路径</button>
+                        <button id="survey-assignment-start-btn" class="path-button">开始任务</button>
+                    </div>
+                    
+                    <div class="survey-params" style="display:none;">
+                        <div class="param-row">
+                            <label>宽度间距 (米):</label>
+                            <input type="number" id="width-spacing" min="1" value="10">
+                        </div>
+                        <div class="param-row">
+                            <label>长度间距 (米):</label>
+                            <input type="number" id="length-spacing" min="1" value="10">
+                        </div>
+                        <div class="param-row">
+                            <label>扫描方向:</label>
+                            <select id="direction-select">
+                                <option value="horizontal">横向</option>
+                                <option value="vertical">纵向</option>
+                            </select>
+                        </div>
+                        <div class="param-row">
+                            <label>起始位置:</label>
+                            <select id="start-corner-select" class="param-input">
+                                <option value="top-left">左上角</option>
+                                <option value="top-right">右上角</option>
+                                <option value="bottom-left">左下角</option>
+                                <option value="bottom-right">右下角</option>
+                            </select>
+                        </div>
+                        <button id="generate-points-btn" class="path-button">生成路径点</button>
+                    </div>
+                    
+                    <div class="point-counter">
+                        已生成 <span id="survey-point-count">0</span> 个测绘点
+                    </div>
+                       
+                        <div class="path-list-container">
+                            <div class="path-list-header">
+                                <span>序号</span>
+                                <span>坐标 (经度, 纬度)</span>
+                                <span>深度 (米)</span>
+                                <span>速度</span>
+                                <span>phi</span>
+                                <span>模式</span>
+                            </div>
+                            <div class="path-list" id="path-list-survey"></div>
+                        </div>
+                    <div class="status-message" id="survey-status">
+                        准备进行区域测绘
+                    </div>
+                </div>
+            </div>
+                <!-- XML导入 -->
+                <div id="xml-tab" class="tab-content">
+                    <div class="xml-import-container">
+                        <div id="file-upload-area" class="file-upload-area">
+                            <div class="upload-icon">📁</div>
+                            <div class="upload-text">点击或拖拽XML文件到此处上传</div>
+                            <div class="upload-text">支持标准路径规划XML格式</div>
+                            <div id="file-info" class="file-info">未选择文件</div>
+                        </div>
+                        
+                        <div class="xml-preview" id="xml-preview">
+                            <!-- XML内容预览将显示在这里 -->
+                        </div>
+                        
+                        <div class="xml-actions">
+                            <button id="browse-btn" class="xml-button">浏览文件</button>
+                            <input type="file" id="xml-file" accept=".xml" style="display: none;">
+                            <button id="import-btn" class="xml-button import" disabled>导入路径</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 滑行 -->
+                <div id="glidepoints-tab" class="tab-content">
+                    <div class="safety-config-container">
+                        <div class="config-sections">
+                            <!-- 输入区域 - 紧凑布局 -->
+                            <div class="config-section">
+                                <h4 class="section-title">添加滑行任务点</h4>
+                                <div class="compact-input-row">
+                                    <div class="compact-input-group">
+                                        <label for="glide-depth">期望深度 (米)</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="glide-depth" class="compact-input" 
+                                                min="-300" max="300" step="0.1" placeholder="深度">
+                                            <span class="compact-unit">米</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="compact-input-group">
+                                        <label for="glide-heading">期望首向 (°)</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="glide-heading" class="compact-input" 
+                                                min="0" max="360" step="1" placeholder="首向">
+                                            <span class="compact-unit">°</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="compact-input-group">
+                                        <label for="glide-front-tank">前油囊 (mL)</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="glide-front-tank" class="compact-input" 
+                                                min="0" max="10000" step="10" placeholder="前油囊">
+                                            <span class="compact-unit">mL</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="compact-input-group">
+                                        <label for="glide-rear-tank">后油囊 (mL)</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="glide-rear-tank" class="compact-input" 
+                                                min="0" max="10000" step="10" placeholder="后油囊">
+                                            <span class="compact-unit">mL</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 添加按钮放在同一行 -->
+                                    <div class="compact-actions">
+                                        <button id="add-glide-point" class="compact-btn primary">
+                                            <i class="fas fa-plus"></i> 添加
+                                        </button>
+                                        <button id="clear-glide-form" class="compact-btn secondary">
+                                            <i class="fas fa-eraser"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 任务点列表 -->
+                            <div class="config-section">
+                                <h4 class="section-title">滑行任务点列表</h4>
+                                
+                                <!-- 表格头部 -->
+                                <div class="path-list-header glide-header">
+                                    <span>序号</span>
+                                    <span>期望深度 (米)</span>
+                                    <span>期望首向 (°)</span>
+                                    <span>前油囊 (mL)</span>
+                                    <span>后油囊 (mL)</span>
+                                    <span>操作</span>
+                                </div>
+                                
+                                <!-- 任务点列表容器 -->
+                                <div class="path-list glide-list" id="glide-points-list">
+                                    <!-- 示例数据 -->
+                                    <div class="path-item glide-item">
+                                        <span class="point-index">1</span>
+                                        <span class="point-depth">50</span>
+                                        <span class="point-heading">120</span>
+                                        <span class="point-front-tank">1500</span>
+                                        <span class="point-rear-tank">1800</span>
+                                        <div class="point-actions">
+                                            <button class="action-btn insert-before" title="在前面插入">
+                                                <i class="fas fa-arrow-up"></i>
+                                            </button>
+                                            <button class="action-btn insert-after" title="在后面插入">
+                                                <i class="fas fa-arrow-down"></i>
+                                            </button>
+                                            <button class="action-btn delete-point" title="删除">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="path-item glide-item">
+                                        <span class="point-index">2</span>
+                                        <span class="point-depth">75</span>
+                                        <span class="point-heading">180</span>
+                                        <span class="point-front-tank">2000</span>
+                                        <span class="point-rear-tank">2200</span>
+                                        <div class="point-actions">
+                                            <button class="action-btn insert-before" title="在前面插入">
+                                                <i class="fas fa-arrow-up"></i>
+                                            </button>
+                                            <button class="action-btn insert-after" title="在后面插入">
+                                                <i class="fas fa-arrow-down"></i>
+                                            </button>
+                                            <button class="action-btn delete-point" title="删除">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 空状态提示 -->
+                                <div class="empty-glide-state" id="empty-glide-state" style="display: none;">
+                                    <i class="fas fa-inbox" style="font-size: 32px; margin-bottom: 10px; opacity: 0.5;"></i>
+                                    <p>暂无滑行任务点，请添加任务点</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 操作按钮 -->
+                        <div class="safety-actions">
+                            <button id="load-glide-template" class="path-button">
+                                <i class="fas fa-download"></i> 加载模板
+                            </button>
+                            <button id="send-glide-task" class="path-button send">
+                                <i class="fas fa-paper-plane"></i> 下发滑行任务
+                            </button>
+                            <button id="save-glide-profile" class="path-button">
+                                <i class="fas fa-save"></i> 保存配置
+                            </button>
+                        </div>
+
+                        <!-- 状态显示 -->
+                        <div class="safety-status" id="glide-status">
+                            <div class="status-message">已添加 <span id="glide-points-count">2</span> 个滑行任务点</div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- 安全配置选项卡 -->
+                <div id="safety-tab" class="tab-content">
+                    <div class="safety-config-container">
+                    
+
+                        <div class="config-sections">
+                  <!-- 在安全配置的范围限制部分添加新配置项 -->
+                        <div class="config-section">
+                            <h4 class="section-title">范围限制</h4>
+                            <div class="config-grid">
+                                <div class="config-item">
+                                    <label for="rule_x_range">东西越界范围 (米)</label>
+                                    <input type="number" id="rule_x_range" class="config-input" 
+                                        step="0.1" value="100">
+                                </div>
+                                <div class="config-item">
+                                    <label for="rule_y_range">南北越界范围 (米)</label>
+                                    <input type="number" id="rule_y_range" class="config-input" 
+                                        step="0.1" value="100">
+                                </div>
+                                <div class="config-item">
+                                    <label for="rule_depth_range">深度越界范围 (米)</label>
+                                    <input type="number" id="rule_depth_range" class="config-input" 
+                                        step="0.1" value="50">
+                                </div>
+                                <div class="config-item">
+                                    <label for="rule_altitude_range">高度保护范围 (米)</label>
+                                    <input type="number" id="rule_altitude_range" class="config-input" 
+                                    step="0.1" value="50">
+                                </div>
+                                <div class="config-item">
+                                    <label for="toleranceXY">目标距离判定</label>
+                                    <input type="number" id="toleranceXY" class="config-input" 
+                                        step="0.1" value="5">
+                                </div>
+                                <!-- 新增的三个配置项 -->
+                                <div class="config-item">
+                                    <label for="expected_front_tank">期望前油囊位置 (mL)</label>
+                                    <input type="number" id="expected_front_tank" class="config-input" 
+                                        min="0" max="10000" step="10" value="0">
+                                </div>
+                                <div class="config-item">
+                                    <label for="expected_rear_tank">期望后油囊位置 (mL)</label>
+                                    <input type="number" id="expected_rear_tank" class="config-input" 
+                                        min="0" max="10000" step="10" value="0">
+                                </div>
+                                <div class="config-item">
+                                    <label for="work_scene">作业场景</label>
+                                    <select id="work_scene" class="config-select">
+                                        <option value="0">0: 水池</option>
+                                        <option value="1">1: 湖上</option>
+                                        <option value="2">2: 海上</option>
+                                    </select>
+                                </div>
+                                <!-- 原有的拉线位移配置 -->
+                                <div class="config-item">
+                                    <label for="front_wire_displacement">前拉线位移 (mm)</label>
+                                    <input type="number" id="front_wire_displacement" class="config-input" 
+                                        min="0" max="1000" step="1" value="0">
+                                </div>
+                                <div class="config-item">
+                                    <label for="rear_wire_displacement">后拉线位移 (mm)</label>
+                                    <input type="number" id="rear_wire_displacement" class="config-input" 
+                                        min="0" max="1000" step="1" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+
+                            <!-- 状态组合配置 -->
+                            <div class="config-section">
+                                <h4 class="section-title">状态组合配置</h4>
+                                <div class="state-combine-grid">
+                                    <!-- 状态组合1 -->
+                                    <div class="state-group">
+                                        <h5>状态组合1</h5>
+                                        <div class="checkbox-group">
+                                            <label class="checkbox-item">
+                                                <input type="checkbox" id="isGlide" class="state-checkbox">
+                                                <span class="checkmark"></span>
+                                                是否滑行 (isGlide)
+                                            </label>
+                                            <label class="checkbox-item">
+                                                <input type="checkbox" id="isReturn" class="state-checkbox">
+                                                <span class="checkmark"></span>
+                                                是否返回 (isReturn)
+                                            </label>
+                                            <label class="checkbox-item">
+                                                <input type="checkbox" id="isRise" class="state-checkbox">
+                                                <span class="checkmark"></span>
+                                                是否上浮 (isRise)
+                                            </label>
+                                            <label class="checkbox-item">
+                                                <input type="checkbox" id="isSink" class="state-checkbox">
+                                                <span class="checkmark"></span>
+                                                是否下潜 (isSink)
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- 状态组合2 -->
+                                    <div class="state-group">
+                                        <h5>状态组合2</h5>
+                                        <div class="checkbox-group">
+                                            <label class="checkbox-item">
+                                                <input type="checkbox" id="isMissionRelative" class="state-checkbox" checked>
+                                                <span class="checkmark"></span>
+                                                是否任务相关 (isMissionRelative)
+                                            </label>
+                                            <label class="checkbox-item">
+                                                <input type="checkbox" id="isDelaySink" class="state-checkbox">
+                                                <span class="checkmark"></span>
+                                                是否延迟下潜 (isDelaySink)
+                                            </label>
+                                            <label class="checkbox-item">
+                                                <input type="checkbox" id="isGrantPos" class="state-checkbox">
+                                                <span class="checkmark"></span>
+                                                是否授权位置 (isGrantPos)
+                                            </label>
+                                        </div>
+                                    </div>
+
+                            
+                                </div>
+                            </div>
+
+                            <!-- 返回参数 -->
+                            <div class="config-section">
+                                <h4 class="section-title">返回参数</h4>
+                                <div class="config-grid">
+                                    <div class="config-item">
+                                        <label for="return_range">返回范围 (米)</label>
+                                        <input type="number" id="return_range" class="config-input" 
+                                            min="-300" max="300" step="0.1" value="100">
+                                        <span class="input-unit">-300~300米</span>
+                                    </div>
+                                    <div class="config-item">
+                                        <label for="return_pos_x">返回位置X (米)</label>
+                                        <input type="number" id="return_pos_x" class="config-input" 
+                                            min="-300" max="300" step="0.1" value="0">
+                                        <span class="input-unit">-300~300米</span>
+                                    </div>
+                                    <div class="config-item">
+                                        <label for="return_pos_y">返回位置Y (米)</label>
+                                        <input type="number" id="return_pos_y" class="config-input" 
+                                            min="-300" max="300" step="0.1" value="0">
+                                        <span class="input-unit">-300~300米</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- PC控制配置 -->
+                            <div class="config-section">
+                                <h4 class="section-title">PC控制配置</h4>
+                                <div class="config-grid">
+                                    <div class="config-item">
+                                        <label class="checkbox-item full-width">
+                                            <input type="checkbox" id="pc_restart_enable" class="state-checkbox">
+                                            <span class="checkmark"></span>
+                                            PC重启使能 (pc_restart_enable)
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                            <!-- 授权位置配置 -->
+                            <div class="config-section">
+                                <h4 class="section-title">授权位置配置</h4>
+                                <div class="config-grid">
+                                    <div class="config-item">
+                                        <label for="grant_pos_time">授权位置时间 (分钟)</label>
+                                        <input type="number" id="grant_pos_time" class="config-input" 
+                                            min="0" max="255" value="30">
+                                        <span class="input-unit">0-255分钟</span>
+                                    </div>
+                                    <div class="config-item">
+                                        <label for="grant_pos_mode">授权位置模式</label>
+                                        <select id="grant_pos_mode" class="config-select">
+                                            <option value="0">0: 关闭推进器</option>
+                                            <option value="1">1: 深度控制</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 操作按钮 -->
+                        <div class="safety-actions">
+                            <button id="load-default-safety" class="path-button">
+                                <i class="fas fa-download"></i> 加载默认配置
+                            </button>
+                            <button id="send-safety-config" class="path-button send">
+                                <i class="fas fa-paper-plane"></i> 发送安全配置
+                            </button>
+                            <button id="save-safety-profile" class="path-button">
+                                <i class="fas fa-save"></i> 保存配置模板
+                            </button>
+                        </div>
+
+                        <!-- 状态显示 -->
+                        <div class="safety-status" id="safety-status">
+                            <div class="status-message">安全配置就绪</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+      <button id="end-drawing-btn" title="结束绘制" style="display: none;">
+                    <svg viewBox="0 0 24 24" width="200" height="28">
+                        <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" fill="white"/>
+                    </svg>
+      </button>
+          <!-- 右键菜单 -->
+    <div id="context-menu" class="custom-marker-context-menu">
+        <div class="context-menu-item delete-item" id="delete-point">删除此路径点</div>
+            
+        <div class="context-menu-item insert-item" id="insert-before">在前面插入点</div>
+        <div class="context-menu-item insert-item" id="insert-after">在后面插入点</div>
+        <!-- 右键菜单 - 添加插入点选项 -->
+    </div>
+
+<!-- #endregion -->
+
+<!-- #region 自检模态框-->
+<!-- 自检模态框 -->
+<div id="selfcheck-modal" class="modal">
+    <div class="modal-content selfcheck-modal-content">
+        <div class="modal-header">
+            <div class="modal-title">
+                <i class="fas fa-cogs"></i>
+                <span>系统自检</span>
+            </div>
+            <button class="close-modal" onclick="window.closeSelfcheckModal()">&times;</button>
+        </div>
+        <div class="modal-body selfcheck-modal-body">
+            <div class="selfcheck-container">
+                <!-- 左侧自检项目列表 -->
+                <div class="selfcheck-items">
+                    <div class="selfcheck-category">
+                        <h3 class="category-title">外接设备</h3>
+                        <div class="selfcheck-item" data-device="ctd">
+                            <span class="device-name">CTD设备</span>
+                            <div class="status-indicator selfcheck-status" data-status="pending"></div>
+                        </div>
+                        <div class="selfcheck-item" data-device="dvl">
+                            <span class="device-name">DVL多普勒</span>
+                            <div class="status-indicator selfcheck-status" data-status="pending"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="selfcheck-category">
+                        <h3 class="category-title">动力设备</h3>
+                        <div class="selfcheck-item" data-device="rudder">
+                            <span class="device-name">舵机系统</span>
+                            <div class="status-indicator selfcheck-status" data-status="pending"></div>
+                        </div>
+                        <div class="selfcheck-item" data-device="thruster">
+                            <span class="device-name">推进器</span>
+                            <div class="status-indicator selfcheck-status" data-status="pending"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="selfcheck-category">
+                        <h3 class="category-title">通讯设备</h3>
+                        <div class="selfcheck-item" data-device="beidou">
+                            <span class="device-name">北斗设备</span>
+                            <div class="status-indicator selfcheck-status" data-status="pending"></div>
+                        </div>
+                        <div class="selfcheck-item" data-device="acoustic">
+                            <span class="device-name">声通设备</span>
+                            <div class="status-indicator selfcheck-status" data-status="pending"></div>
+                        </div>
+                        <div class="selfcheck-item" data-device="video">
+                            <span class="device-name">图传设备</span>
+                            <div class="status-indicator selfcheck-status" data-status="pending"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右侧反馈面板 -->
+                <div class="selfcheck-feedback">
+                    <div class="progress-section">
+                        <h3>自检进度</h3>
+                        <div class="selfcheck-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="selfcheck-progress-fill"></div>
+                            </div>
+                            <span class="progress-text" id="selfcheck-progress-text">0%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="feedback-section">
+                        <h3>自检反馈</h3>
+                        <div class="feedback-panel" id="selfcheck-feedback-panel">
+                            <div class="feedback-message initial-message">
+                                点击"开始自检"按钮启动系统自检...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="selfcheck-start-btn" class="path-button">
+                <i class="fas fa-play"></i> 开始自检
+            </button>
+            <button id="selfcheck-stop-btn" class="path-button clear" disabled>
+                <i class="fas fa-stop"></i> 停止自检
+            </button>
+            <button id="selfcheck-export-btn" class="path-button">
+                <i class="fas fa-download"></i> 导出报告
+            </button>
+        </div>
+    </div>
+</div>
+<!-- #endregion -->
+
+
+<!-- #region 切换设备-->
+ 
+<!-- 设备切换模态框 -->
+<div id="device-modal" class="modal">
+    <div class="modal-content" style="max-width:600px;">
+        <div class="modal-header">
+            <div class="modal-title">设备管理</div>
+            <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="tabs">
+                <button class="tab active" data-tab="auv">AUV设备</button>
+                <button class="tab" data-tab="sailboat">帆船设备</button>
+            </div>
+            
+            <div class="tab-content active" id="auv-tab">
+                <div class="device-list">
+                    <div class="device-item" data-id="auv1" data-type="auv">
+                        <div class="device-icon">🤖</div>
+                        <div class="device-info">
+                            <div class="device-name">AUV 1  </div>
+                            <div class="device-status">
+                                <span class="status-indicator status-connected"></span>
+                                <span class="status-text">运行中</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="device-item" data-id="auv2" data-type="auv">
+                        <div class="device-icon">🤖</div>
+                        <div class="device-info">
+                            <div class="device-name">AUV 2  </div>
+                            <div class="device-status">
+                                <span class="status-indicator status-disconnected"></span>
+                                <span class="status-text">离线</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="device-item" data-id="auv3" data-type="auv">
+                        <div class="device-icon">🤖</div>
+                        <div class="device-info">
+                            <div class="device-name">AUV 3  </div>
+                            <div class="device-status">
+                                <span class="status-indicator status-disconnected"></span>
+                                <span class="status-text">离线</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="sailboat-tab">
+                <div class="device-list">
+                    <div class="device-item" data-id="sailboat1" data-type="sailboat">
+                        <div class="device-icon">⛵</div>
+                        <div class="device-info">
+                            <div class="device-name">Sailboat-01</div>
+                            <div class="device-status">
+                                <span class="status-indicator status-disconnected"></span>
+                                <span class="status-text">离线</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="device-item" data-id="sailboat2" data-type="sailboat">
+                        <div class="device-icon">⛵</div>
+                        <div class="device-info">
+                            <div class="device-name">Sailboat-02</div>
+                            <div class="device-status">
+                                <span class="status-indicator status-disconnected"></span>
+                                <span class="status-text">离线</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="confirm-device" class="path-button">确认选择</button>
+                <button id="refresh-devices" class="path-button">刷新状态</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 右键菜单 -->
+<div id="device-context-menu" class="custom-marker-context-menu">
+    <div class="context-menu-item" id="start-device">启动设备</div>
+    <div class="context-menu-item" id="stop-device">停止设备</div>
+    <div class="context-menu-item" id="restart-device">重启设备</div>
+</div>
+<!-- #endregion -->
+
+
+<!-- #region 已启动设备-->
+
+<!-- 已启动设备面板 -->
+<div id="active-devices-panel" style="position:absolute; top:80px; right:0; width: 1000px;background:rgba(10,25,41,0.85); backdrop-filter:blur(6.4px); border-radius:14.4px; padding:16px; box-shadow:0 8px 24px rgba(0,0,0,0.4); z-index:1001; border:1px solid rgba(0,167,255,0.15); width:180px; display:none;">
+    
+    <div id="active-devices-list">
+
+            <div class="active-device-item">
+                <span>AUV-01</span>
+                <button class="device-status-info">
+                    <div class="device-status-row">
+                        <div class="status-label">北斗:</div>
+                        <div class="status-value">00:00:00</div>
+                    </button>
+                   <button id="voice-panel">
+                    <div class="device-status-row">
+                        <span class="status-label">声通:</span>
+                        <span class="status-value">00:00:00</span>
+                    </div>
+                    </button>
+                    <div class="device-status-row">
+                        <span class="status-label">图传:</span>
+                        <span class="status-value">00:00:00</span>
+                    </div>
+                    <div class="device-status-row">
+                        <span class="status-label">电量:</span>
+                        <span class="status-value battery-high">0°</span>
+                    </div>
+                </div>
+            </div>
+        
+    </div>
+</div>
+<!-- 北斗数据模态框 -->
+<!-- 北斗数据模态框 -->
+<div id="beidou-modal" class="modal">
+    <div class="modal-content" style="max-width: 700px;">
+        <div class="modal-header">
+            <div class="modal-title">
+                <i class="fas fa-satellite"></i>
+                <span>北斗设备数据</span>
+            </div>
+            <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="beidou-data-container">
+                <div class="data-section">
+                    <h3>北斗数据解析</h3>
+                    <div class="data-grid">
+                        <div class="data-row">
+                            <div class="data-label">接收时间:</div>
+                            <div class="data-value" id="beidou-receive-time">--:--:--</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label">北斗设备ID:</div>
+                            <div class="data-value" id="beidou-device-id">未知</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label">位置X:</div>
+                            <div class="data-value" id="beidou-pos-x">0</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label">位置Y:</div>
+                            <div class="data-value" id="beidou-pos-y">0</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label">错误代码:</div>
+                            <div class="data-value" id="beidou-error-code">0</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label">当前状态:</div>
+                            <div class="data-value" id="beidou-current-state">0</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label">深度:</div>
+                            <div class="data-value" id="beidou-depth">0米</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label">高度:</div>
+                            <div class="data-value" id="beidou-altitude">0米</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label">电池电量:</div>
+                            <div class="data-value" id="beidou-battery">0%</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label">经度:</div>
+                            <div class="data-value" id="beidou-longitude">0.000000</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label">纬度:</div>
+                            <div class="data-value" id="beidou-latitude">0.000000</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="data-section">
+                    <h3>原始数据</h3>
+                    <div class="raw-data-container">
+                        <pre id="beidou-raw-data">等待数据...</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="beidou-refresh-btn" class="path-button">
+                <i class="fas fa-sync-alt"></i> 刷新数据
+            </button>
+            <button id="beidou-export-btn" class="path-button">
+                <i class="fas fa-download"></i> 导出数据
+            </button>
+        </div>
+    </div>
+</div>
+<!-- 声通数据解析模态框 -->
+<div id="acoustic-modal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+            <div class="modal-title">
+                <i class="fas fa-wifi"></i>
+                <span>声通设备数据解析</span>
+            </div>
+            <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="acoustic-data-container">
+                <div class="data-section">
+                    <h3>原始数据</h3>
+                    <div class="raw-data" id="acoustic-raw-data"></div>
+                </div>
+                <div class="data-section">
+                    <h3>解析结果</h3>
+                    <div class="parsed-data" id="acoustic-parsed-data"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- #endregion -->
+
+<!-- #region 油馕-->
+<!-- 在比例尺控件后面添加油桶按钮 -->
+
+<!-- 油桶按钮 -->
+<div class="oil-tank-btn" id="oil-tank-btn">
+    <img src="img/oil/oil.svg" alt="油量显示" title="油量状态">
+</div>
+
+<!-- 油量显示模态框 -->
+<!-- 油量显示模态框 -->
+<div id="oil-tank-modal" class="modal oil-tank-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">
+                <i class="fas fa-oil-can"></i>
+                <span>油量状态</span>
+            </div>
+            <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="oil-tank-container">
+                <!-- 三个油囊水平排列 -->
+                <div class="oil-tank-items">
+                    <!-- 前油囊 -->
+                    <div class="oil-tank-item">
+                        <div class="oil-tank-header">
+                            <i class="fas fa-tint"></i>
+                            <span>前油囊</span>
+                        </div>
+                        <div class="oil-tank-gauge">
+                            <div class="gauge-background">
+                                <div class="gauge-fill" id="front-oil-level" style="height: 75%"></div>
+                            </div>
+                            <div class="oil-percentage" id="front-oil-percentage">75%</div>
+                        </div>
+                        <div class="oil-volume"><span id="front-oil-volume">2500</span>mL</div>
+                    </div>
+
+                    <!-- 后油囊 -->
+                    <div class="oil-tank-item">
+                        <div class="oil-tank-header">
+                            <i class="fas fa-tint"></i>
+                            <span>后油囊</span>
+                        </div>
+                        <div class="oil-tank-gauge">
+                            <div class="gauge-background">
+                                <div class="gauge-fill" id="rear-oil-level" style="height: 60%"></div>
+                            </div>
+                            <div class="oil-percentage" id="rear-oil-percentage">60%</div>
+                        </div>
+                        <div class="oil-volume"><span id="rear-oil-volume">2500</span>mL</div>
+                    </div>
+
+                    <!-- 外油囊 -->
+                    <div class="oil-tank-item">
+                        <div class="oil-tank-header">
+                            <i class="fas fa-tint"></i>
+                            <span>外油囊</span>
+                        </div>
+                        <div class="oil-tank-gauge">
+                            <div class="gauge-background">
+                                <div class="gauge-fill" id="external-oil-level" style="height: 90%"></div>
+                            </div>
+                            <div class="oil-percentage" id="external-oil-percentage">90%</div>
+                        </div>
+                        <div class="oil-volume"><span id="external-oil-volume">5000</span>mL</div>
+                    </div>
+                </div>
+
+                <!-- 修正脉冲输入框 -->
+                <div class="pulse-controls">
+                    <div class="pulse-item">
+                        <label for="front-pulse">前油囊修正脉冲:</label>
+                        <div class="input-group">
+                            <input type="number" id="front-pulse" class="pulse-input" min="0" max="10000" value="0">
+                            <span class="input-unit">脉冲</span>
+                        </div>
+                    </div>
+                    
+                    <div class="pulse-item">
+                        <label for="rear-pulse">后油囊修正脉冲:</label>
+                        <div class="input-group">
+                            <input type="number" id="rear-pulse" class="pulse-input" min="0" max="10000" value="0">
+                            <span class="input-unit">脉冲</span>
+                        </div>
+                    </div>
+                </div>
+                     <!-- 拉线位移显示 -->
+                <div class="wire-displacement-controls">
+                    <div class="wire-displacement-item">
+                        <label for="front-wire-displacement">前拉线位移:</label>
+                        <div class="input-group">
+                            <input type="number" id="front-wire-displacement" class="wire-displacement-input" value="0" readonly>
+                            <span class="input-unit">mm</span>
+                        </div>
+                    </div>
+                    
+                    <div class="wire-displacement-item">
+                        <label for="rear-wire-displacement">后拉线位移:</label>
+                        <div class="input-group">
+                            <input type="number" id="rear-wire-displacement" class="wire-displacement-input" value="0" readonly>
+                            <span class="input-unit">mm</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="apply-pulse-btn" class="path-button">
+                <i class="fas fa-check"></i> 应用
+            </button>
+            <button id="oilstop-pulse-btn" class="path-button clear">
+                <i class="fas fa-bolt"></i> 停止
+            </button>
+            <button id="reset-pulse-btn" class="path-button clear">
+                <i class="fas fa-redo"></i> 重置
+            </button>
+        </div>
+    </div>
+</div>
+<!-- #endregion -->
+
+ 
+  <!-- #region消息提醒 -->
+        <!-- 消息提醒容器 -->
+        <div id="message-notification" class="message-hidden">
+        <div class="message-content">
+            <span id="message-text">这是一条消息提醒</span>
+            <button class="message-close" onclick="hideMessage()">×</button>
+        </div>
+        </div>
+ 
+ <!-- #endregion -->
+
+<!-- #region 外部资源连接-->
+    <link rel="stylesheet" href="styles/oil-tank.css">
+<!-- #region 外部资源链接-->
+    <!-- Leaflet 样式表 -->
+    <link rel="stylesheet" href="leaflet/leaflet.css" />
+    <!-- Leaflet JavaScript 文件 -->
+    <script src="leaflet/leaflet.js"></script>
+    <script src="leaflet/leaflet.rotatedMarker.js"></script>
+    <!-- #endregion -->
+    
+    <!-- 内部脚本 -->
+
+    <script src="scripts/throwaway.js"></script> 
+    <script src="scripts/glide.js"></script> 
+    <script src="scripts/safe.js"></script> 
+    <script src="scripts/xbox.js"></script> 
+    <script src="scripts/self-check.js"></script> 
+    <script src="scripts/pin-manager.js"></script>
+    <script src="scripts/oil-tank.js"></script>
+    <script src="scripts/beidou-modal.js"></script>
+    <script src="scripts/voice.js"></script>
+    <script src="scripts/power.js"></script>
+    <script src="scripts/thruster-control.js"></script>
+    <script src="scripts/time.js"></script>
+    <script src="scripts/devices.js"></script>
+    <script src="scripts/map.js"></script>
+    <script src="scripts/path-planning.js"></script>
+    <script src="scripts/main.js"></script>
+    <script src="scripts/Sailboat-model.js"></script> 
+    <script src="scripts/sailboat-thruster-display.js"></script>
+    
+    
+</body>
+</html>

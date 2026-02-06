@@ -1,0 +1,398 @@
+/* oil-tank.css - 紧凑版油量显示样式 */
+
+/* 油桶按钮样式 */
+.oil-tank-btn {
+    position: absolute;
+    top: 120px;
+    right: 10vh; /* 调整位置，确保在屏幕内 */
+    z-index: 10;
+    width: 35px;
+    height: 35px;
+    background: rgba(10, 25, 41, 0.9);
+    border: 2px solid rgba(0, 167, 255, 0.6);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.oil-tank-btn {
+    z-index: 5 !important; /* 使用!important确保优先级 */
+}
+/* 修复模态框黑色背景问题 */
+.oil-tank-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* 适当的半透明背景 */
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* 确保在最上层 */
+}
+.oil-tank-btn:hover {
+    background: rgba(0, 167, 255, 0.2);
+    border-color: #00a7ff;
+    transform: scale(1.1);
+}
+
+.oil-tank-btn img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1);
+}
+
+/* 油量模态框样式 - 紧凑版 */
+.oil-tank-modal .modal-content {
+    background: linear-gradient(135deg, #0a1929 0%, #1a3a5f 100%);
+    border: 1px solid rgba(0, 167, 255, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    max-width: 380px !important; /* 限制最大宽度 */
+    width: 90vw; /* 响应式宽度 */
+}
+
+.oil-tank-container {
+    padding: 8px;
+}
+
+/* 油囊项紧凑布局 */
+.oil-tank-items {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.oil-tank-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 8px;
+    text-align: center;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.oil-tank-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.oil-tank-header i {
+    font-size: 14px;
+    color: #00a7ff;
+    margin-bottom: 3px;
+}
+
+.oil-tank-header span {
+    font-size: 12px;
+    font-weight: bold;
+    color: #fff;
+}
+
+/* 紧凑的油量计 */
+.oil-tank-gauge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 5px 0;
+}
+
+.gauge-background {
+    width: 20px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.gauge-fill {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    border-radius: 10px;
+    transition: height 0.5s ease, background 0.5s ease;
+}
+
+.oil-percentage {
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    margin-top: 3px;
+}
+
+.oil-volume {
+    color: #b0b0b0;
+    font-size: 10px;
+}
+
+/* 修正脉冲控制紧凑样式 */
+.pulse-controls {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pulse-item {
+    margin-bottom: 8px;
+}
+
+.pulse-item label {
+    display: block;
+    margin-bottom: 3px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+}
+
+.pulse-input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    padding: 5px 8px;
+    color: #fff;
+    font-size: 12px;
+    height: 28px;
+}
+
+.pulse-input:focus {
+    outline: none;
+    border-color: #00a7ff;
+    background: rgba(0, 167, 255, 0.1);
+}
+
+.input-unit {
+    margin-left: 5px;
+    color: #b0b0b0;
+    font-size: 10px;
+    min-width: 30px;
+}
+
+/* 紧凑的模态框头部和底部 */
+.oil-tank-modal .modal-header {
+    padding: 10px 15px;
+}
+
+.oil-tank-modal .modal-title {
+    font-size: 14px;
+}
+
+.oil-tank-modal .modal-body {
+    padding: 5px 10px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.oil-tank-modal .modal-footer {
+    padding: 8px 15px;
+    display: flex;
+    gap: 8px;
+}
+
+.oil-tank-modal .path-button {
+    padding: 6px 12px;
+    font-size: 12px;
+    flex: 1;
+}
+
+/* 响应式设计 */
+@media (max-width: 480px) {
+    .oil-tank-btn {
+        bottom: 15px;
+        right: 15px;
+        width: 32px;
+        height: 32px;
+    }
+    
+    .oil-tank-btn img {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .oil-tank-modal .modal-content {
+        margin: 10px;
+        max-width: 95vw !important;
+    }
+    
+    .oil-tank-items {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+    
+    .oil-tank-item {
+        min-height: auto;
+        flex-direction: row;
+        align-items: center;
+        padding: 6px;
+    }
+    
+    .oil-tank-header {
+        flex-direction: row;
+        margin-bottom: 0;
+        margin-right: 10px;
+        min-width: 60px;
+    }
+    
+    .oil-tank-header i {
+        margin-right: 5px;
+        margin-bottom: 0;
+    }
+    
+    .oil-tank-gauge {
+        flex-direction: row;
+        margin: 0;
+        margin-right: 10px;
+    }
+    
+    .gauge-background {
+        margin-right: 8px;
+    }
+    
+    .oil-volume {
+        margin-left: auto;
+    }
+}
+
+/* 拉线位移控件样式 */
+.wire-displacement-controls {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(0, 167, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 167, 255, 0.2);
+}
+
+.wire-displacement-item {
+    flex: 1;
+    margin: 0 10px;
+}
+
+.wire-displacement-item label {
+    display: block;
+    margin-bottom: 8px;
+    color: #e0f7ff;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.wire-displacement-input {
+    width: 100%;
+    padding: 8px 12px;
+    background: rgba(10, 25, 41, 0.8);
+    border: 1px solid rgba(0, 167, 255, 0.3);
+    border-radius: 4px;
+    color: #00a7ff;
+    font-size: 14px;
+    text-align: center;
+}
+
+.wire-displacement-input:read-only {
+    background: rgba(10, 25, 41, 0.6);
+    color: #66c7ff;
+    cursor: not-allowed;
+}
+
+.wire-displacement-input:focus {
+    outline: none;
+    border-color: #00a7ff;
+    box-shadow: 0 0 0 2px rgba(0, 167, 255, 0.2);
+}
+/* 无刷电机状态显示样式 */
+.brushless-display-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 16px;
+    background: rgba(0, 167, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 167, 255, 0.2);
+}
+
+.brushless-status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.brushless-status-item label {
+    font-weight: 600;
+    color: #e0f7ff;
+    font-size: 14px;
+}
+
+.brushless-value {
+    font-weight: 700;
+    font-size: 16px;
+    color: #00a7ff;
+    padding: 4px 12px;
+    border-radius: 4px;
+    background: rgba(0, 167, 255, 0.1);
+    min-width: 60px;
+    text-align: center;
+}
+
+.brushless-value.status-ready {
+    color: #4caf50;
+    background: rgba(76, 175, 80, 0.1);
+}
+
+.brushless-value.status-running {
+    color: #ff9800;
+    background: rgba(255, 152, 0, 0.1);
+    animation: pulse 1.5s infinite;
+}
+
+.brushless-value.status-calibrating {
+    color: #2196f3;
+    background: rgba(33, 150, 243, 0.1);
+    animation: pulse 1s infinite;
+}
+
+.brushless-controls {
+    grid-column: span 2;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+.brushless-controls .path-button {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+/* 动画效果 */
+@keyframes oilLevelPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+.gauge-fill.updated {
+    animation: oilLevelPulse 0.3s ease;
+}

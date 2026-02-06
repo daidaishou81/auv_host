@@ -1,0 +1,319 @@
+
+/* 电源控制模态框专用样式 */
+.power-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.power-modal-content {
+    background: rgba(10, 25, 41, 0.95);
+    width: 95%; /* 增加宽度百分比 */
+    max-width: 1200px; /* 增加最大宽度 */
+    height: auto; /* 自动高度 */
+    max-height: 90vh; /* 限制最大高度 */
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 167, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.power-modal-header {
+    background: rgba(10, 30, 50, 0.8);
+    padding: 12px 20px; /* 减小内边距 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 167, 255, 0.2);
+}
+
+.power-modal-footer {
+    padding: 12px 20px; /* 减小内边距 */
+    background: rgba(10, 30, 50, 0.8);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(0, 167, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.power-modal-title {
+    font-size: 16px; /* 减小字体大小 */
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* 减小间距 */
+    color: #7fdbff;
+    text-shadow: 0 0 8px rgba(127, 219, 255, 0.5);
+}
+
+.power-close-btn {
+    background: none;
+    border: none;
+    color: #e0f7ff;
+    font-size: 20px; /* 减小关闭按钮大小 */
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.power-close-btn:hover {
+    color: #ff6b6b;
+}
+
+.power-modal-body {
+    padding: 15px; /* 减小内边距 */
+    max-height: calc(90vh - 120px); /* 计算合适的高度 */
+    overflow: hidden; /* 隐藏溢出，确保不显示滚动条 */
+}
+
+/* 新的紧凑网格布局样式 */
+.power-devices-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5列布局容纳20个设备 */
+    gap: 10px; /* 减小间距 */
+    margin-bottom: 0;
+}
+
+.power-device-card {
+    background: rgba(16, 39, 66, 0.6);
+    padding: 10px; /* 减小内边距 */
+    border-radius: 6px; /* 减小圆角 */
+    border: 1px solid rgba(0, 167, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: all 0.3s ease;
+    min-height: 80px; /* 设置最小高度 */
+    justify-content: space-between; /* 均匀分布内容 */
+}
+
+.power-device-card:hover {
+    background: rgba(16, 39, 66, 0.8);
+    transform: translateY(-1px); /* 减小悬停效果 */
+    box-shadow: 0 2px 8px rgba(0, 167, 255, 0.2);
+}
+
+.device-id {
+    font-size: 10px; /* 减小字体大小 */
+    color: #a0d7ff;
+    margin-bottom: 3px; /* 减小间距 */
+    font-weight: bold;
+}
+
+.device-name {
+    font-size: 12px; /* 减小字体大小 */
+    font-weight: 600;
+    color: #00e5ff;
+    margin-bottom: 8px;
+    min-height: 30px; /* 减小最小高度 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2; /* 设置行高 */
+    word-break: break-all; /* 允许长单词换行 */
+}
+
+.device-status {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px; /* 减小间距 */
+    font-size: 10px; /* 减小字体大小 */
+    justify-content: center;
+}
+
+.power-status-indicator {
+    display: inline-block;
+    width: 6px; /* 减小指示器大小 */
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 4px; /* 减小间距 */
+}
+
+.power-status-on {
+    background: #00ff9d;
+    box-shadow: 0 0 4px #00ff9d;
+}
+
+.power-status-off {
+    background: #ff6b6b;
+    box-shadow: 0 0 4px #ff6b6b;
+}
+
+/* 更小的开关样式 */
+.power-switch {
+    position: relative;
+    display: inline-block;
+    width: 32px; /* 减小开关宽度 */
+    height: 16px; /* 减小开关高度 */
+}
+
+.power-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.power-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #ff6b6b;
+    transition: .4s;
+    border-radius: 16px;
+}
+
+.power-slider:before {
+    position: absolute;
+    content: "";
+    height: 12px; /* 减小滑块大小 */
+    width: 12px;
+    left: 2px; /* 调整位置 */
+    bottom: 2px;
+    background: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .power-slider {
+    background: #00ff9d;
+}
+
+input:checked + .power-slider:before {
+    transform: translateX(16px); /* 调整滑动距离 */
+}
+
+.power-bulk-actions {
+    display: flex;
+    gap: 10px; /* 减小间距 */
+}
+
+.power-action-btn {
+    padding: 8px 15px; /* 减小按钮内边距 */
+    border: none;
+    border-radius: 6px; /* 减小圆角 */
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px; /* 减小间距 */
+    font-size: 12px; /* 减小字体大小 */
+}
+
+.power-on-all {
+    background: linear-gradient(135deg, #00c853 0%, #00a83e 100%);
+}
+
+.power-off-all {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+}
+
+.power-confirm-btn {
+    padding: 8px 20px; /* 减小按钮内边距 */
+    background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+}
+
+.power-action-btn:hover, .power-confirm-btn:hover {
+    transform: translateY(-1px); /* 减小悬停效果 */
+    box-shadow: 0 4px 12px rgba(0, 120, 212, 0.4);
+}
+
+/* 响应式设计 */
+@media (max-width: 1400px) {
+    .power-devices-grid {
+        grid-template-columns: repeat(4, 1fr); /* 中等屏幕4列 */
+    }
+}
+
+@media (max-width: 1100px) {
+    .power-devices-grid {
+        grid-template-columns: repeat(5, 1fr); /* 保持5列但调整间距 */
+        gap: 8px;
+    }
+    
+    .power-modal-content {
+        width: 98%;
+        max-width: 1000px;
+    }
+}
+
+@media (max-width: 900px) {
+    .power-devices-grid {
+        grid-template-columns: repeat(4, 1fr); /* 小屏幕4列 */
+    }
+}
+
+@media (max-width: 700px) {
+    .power-devices-grid {
+        grid-template-columns: repeat(3, 1fr); /* 移动端3列 */
+    }
+    
+    .power-modal-footer {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .power-bulk-actions {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 500px) {
+    .power-devices-grid {
+        grid-template-columns: repeat(2, 1fr); /* 超小屏幕2列 */
+    }
+    
+    .power-modal-content {
+        width: 99%;
+        margin: 10px;
+    }
+}
+
+/* 确保模态框内容不会超出视口 */
+@media (max-height: 800px) {
+    .power-modal-content {
+        max-height: 95vh;
+    }
+    
+    .power-modal-body {
+        max-height: calc(95vh - 120px);
+    }
+    
+    .power-device-card {
+        min-height: 70px; /* 进一步减小高度 */
+        padding: 8px;
+    }
+    
+    .device-name {
+        min-height: 25px;
+        font-size: 11px;
+    }
+}
+.power-status-pending {
+    background-color: #ff9800 !important; /* 橙色表示等待中 */
+}

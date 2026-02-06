@@ -1,0 +1,98 @@
+
+/* 图钉管理器样式 */
+.pin-control {
+    background-color: rgba(10, 25, 41, 0.7) !important;
+    border: 1px solid rgba(0, 167, 255, 0.3) !important;
+    color: #fff !important;
+}
+
+.pin-control:hover {
+    background-color: rgba(0, 167, 255, 0.3) !important;
+}
+
+.pin-list-container {
+    margin-top: 15px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+.leaflet-top.leaflet-right .leaflet-control-pin {
+    margin-top: 0px; /* 调整此值以适应比例尺高度 */
+    margin-right: 10px; /* 确保与右侧对齐 */
+}
+.pin-list-header {
+    display: grid;
+    grid-template-columns: 60px 1fr 2fr 100px 120px;
+    padding: 10px;
+    background: rgba(0, 167, 255, 0.1);
+    border-radius: 4px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.pin-item {
+    display: grid;
+    grid-template-columns: 60px 1fr 2fr 100px 120px;
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pin-item:hover {
+    background: rgba(0, 167, 255, 0.05);
+}
+
+.edit-pin-btn, .delete-pin-btn {
+    padding: 3px 8px;
+    margin: 0 2px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.edit-pin-btn {
+    background: #3498db;
+    color: white;
+}
+
+.delete-pin-btn {
+    background: #e74c3c;
+    color: white;
+}
+
+.pin-editor {
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(0, 167, 255, 0.05);
+    border-radius: 4px;
+}
+
+.form-group {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.form-group label {
+    width: 100px;
+    font-weight: bold;
+}
+
+.form-input {
+    flex: 1;
+    padding: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(10, 25, 41, 0.8);
+    color: white;
+    border-radius: 3px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.custom-pin-icon {
+    background: transparent !important;
+    border: none !important;
+}

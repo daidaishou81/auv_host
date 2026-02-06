@@ -1,0 +1,19 @@
+UDP Packet Data Log
+Timestamp: 2025/11/30 20:59:22
+Packet: 1 of 1
+Points in packet: 2
+Packet size: 40 bytes
+
+Points Data:
+Point 1: x=21.986, y=-69.298, depth=0, phi=0, speed=0, mode=0, time=10
+Point 2: x=7.225, y=-33.029, depth=0, phi=0, speed=0, mode=0, time=10
+
+Raw Packet Data (Hex):
+aabb0100280b0a010001008033810c7d
+7c803180318031803180797ee6803180
+318031803167eeff
+
+Raw Packet Data (Decimal):
+170 187 001 000 040 011 010 001 000 001 000 128 051 129 012 125
+124 128 049 128 049 128 049 128 049 128 121 126 230 128 049 128
+049 128 049 128 049 103 238 255
